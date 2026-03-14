@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedHub Clinic - Xodimlar registratsiyasi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#0b1120] text-slate-300 min-h-screen relative overflow-y-auto overflow-x-hidden flex flex-col">
+    <!-- Background gradients -->
+    <div class="absolute top-0 right-0 w-2/3 h-full bg-gradient-to-bl from-[#1a202c]/50 to-transparent pointer-events-none"></div>
+    <div class="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-br from-[#134e4a]/40 to-transparent pointer-events-none"></div>
+
+    <!-- Custom Auth Navbar -->
+    <nav class="relative z-10 border-b border-white/5 bg-[#0b1120]/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="{{ url_for('main.index') }}" class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-orange-300 to-amber-600 rounded-xl flex items-center justify-center shadow-lg text-white font-bold text-lg">M</div>
+                <div>
+                    <span class="text-xl font-bold text-white tracking-tight block leading-tight">MedHub Clinic</span>
+                    <span class="text-[10px] text-slate-400 font-semibold tracking-widest uppercase block">Smart Hospital Platform</span>
+                </div>
+            </a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="{{ url_for('main.index') }}" class="text-slate-300 hover:text-white font-medium transition-colors">Bosh sahifa</a>
+                <a href="{{ url_for('doctor.list_doctors') }}" class="text-slate-300 hover:text-white font-medium transition-colors">Shifokorlar</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="{{ url_for('auth.login') }}" class="px-5 py-2 rounded-full border border-white/10 text-white font-medium hover:bg-white/5 transition-all text-sm">Kirish</a>
+                <a href="{{ url_for('auth.register') }}" class="px-5 py-2 bg-[#22c55e] text-white rounded-full font-semibold shadow-lg shadow-green-500/20 transition-all text-sm cursor-pointer">Bemor registratsiyasi</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="relative z-10 flex-1 flex items-center justify-center p-6 mt-8 mb-8">
+        <div class="max-w-2xl w-full">
+            <div class="bg-[#0b1120] border border-white/5 rounded-3xl p-10 shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-48 h-48 bg-blue-500/5 blur-3xl rounded-full pointer-events-none"></div>
+                
+                <div class="relative z-10">
+                    <div class="text-center mb-10">
+                        <p class="text-[#3b82f6] text-xs font-bold uppercase tracking-widest mb-3">Staff Portal</p>
+                        <h1 class="text-4xl font-bold text-white mb-4">Xodimlar registratsiyasi</h1>
+                        <p class="text-slate-400 text-sm max-w-sm mx-auto">
+                            Tizimga shifokor yoki admin sifatida qo'shilish. Iltimos o'z rolingizni tug'ri tanlang.
+                        </p>
+                    </div>
+
+                    <form action="" method="post" class="space-y-6" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-slate-300">Ro'yxatdan o'tish turi (Rol)</label>
+                            {{ form.role(class="w-full bg-[#121827] border border-white/10 rounded-xl px-4 py-3.5 text-white focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] outline-none transition-all text-sm") }}
+                            {% for error in form.role.errors %}
+                            <span class="text-red-400 text-xs mt-1 block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="block text-sm font-semibold text-slate-300">Foydalanuvchi nomi</label>
+                                {{ form.username(class="w-full bg-[#121827] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] outline-none transition-all text-sm") }}
+                                {% for error in form.username.errors %}
+                                <span class="text-red-400 text-xs mt-1 block">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="block text-sm font-semibold text-slate-300">Email manzili</label>
+                                {{ form.email(class="w-full bg-[#121827] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] outline-none transition-all text-sm") }}
+                                {% for error in form.email.errors %}
+                                <span class="text-red-400 text-xs mt-1 block">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="block text-sm font-semibold text-slate-300">Parol</label>
+                                {{ form.password(class="w-full bg-[#121827] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] outline-none transition-all text-sm") }}
+                                {% for error in form.password.errors %}
+                                <span class="text-red-400 text-xs mt-1 block">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="block text-sm font-semibold text-slate-300">Parolni takrorlang</label>
+                                {{ form.password2(class="w-full bg-[#121827] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] outline-none transition-all text-sm") }}
+                                {% for error in form.password2.errors %}
+                                <span class="text-red-400 text-xs mt-1 block">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-slate-300">Profil rasmi (Ixtiyoriy)</label>
+                            {{ form.profile_pic(class="w-full bg-[#121827] border border-white/10 rounded-xl px-4 py-2 text-white outline-none transition-all text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-500/10 file:text-blue-400 hover:file:bg-blue-500/20 cursor-pointer") }}
+                            {% for error in form.profile_pic.errors %}
+                            <span class="text-red-400 text-xs mt-1 block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Doctor Specific Fields -->
+                        <div id="doctor_fields" class="space-y-6 hidden mt-6">
+                            <hr class="border-white/10">
+                            <h3 class="text-[#3b82f6] text-sm font-bold uppercase tracking-widest text-center mt-4">Shifokor ma'lumotlari</h3>
+                            <div class="space-y-2">
+                                <label class="block text-sm font-semibold text-slate-300">Mutaxassislik</label>
+                                {{ form.specialty(class="w-full bg-[#121827] border border-white/10 rounded-xl px-4 py-3.5 text-white focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] outline-none transition-all text-sm", id="specialty") }}
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-semibold text-slate-300">Tajriba (yillarda)</label>
+                                    {{ form.experience(class="w-full bg-[#121827] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] outline-none transition-all text-sm", type="number", min="0", id="experience") }}
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-semibold text-slate-300">Qabul narxi ($)</label>
+                                    {{ form.consultation_fee(class="w-full bg-[#121827] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] outline-none transition-all text-sm", type="number", step="0.01", min="0", id="consultation_fee") }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-6">
+                            {{ form.submit(class="w-full py-3.5 bg-[#3b82f6] text-white rounded-xl font-bold text-sm hover:bg-blue-600 transition-all cursor-pointer shadow-lg shadow-blue-500/20 border-none") }}
+                        </div>
+                        
+                        <p class="text-center text-slate-400 text-sm mt-8">
+                            Hisobingiz bormi? <a href="{{ url_for('auth.login') }}" class="text-[#3b82f6] font-bold hover:underline">Kirish</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const roleSelect = document.getElementById('role');
+            const doctorFields = document.getElementById('doctor_fields');
+            const expInput = document.getElementById('experience');
+            const feeInput = document.getElementById('consultation_fee');
+            
+            function toggleFields() {
+                if (roleSelect && roleSelect.value === 'doctor') {
+                    doctorFields.classList.remove('hidden');
+                    if (expInput) expInput.required = true;
+                    if (feeInput) feeInput.required = true;
+                } else {
+                    doctorFields.classList.add('hidden');
+                    if (expInput) expInput.required = false;
+                    if (feeInput) feeInput.required = false;
+                }
+            }
+            
+            if (roleSelect) {
+                roleSelect.addEventListener('change', toggleFields);
+                toggleFields();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-12">
+    <!-- User Header -->
+    <div class="flex items-center space-x-8 pb-12 border-b border-slate-200">
+        <div class="relative">
+            {% if user.profile_pic %}
+            <img src="{{ url_for('static', filename=user.profile_pic) }}" class="w-32 h-32 rounded-[2.5rem] object-cover ring-8 ring-white shadow-2xl" alt="">
+            {% else %}
+            <img src="https://i.pravatar.cc/150?u={{ user.id }}" class="w-32 h-32 rounded-[2.5rem] object-cover ring-8 ring-white shadow-2xl" alt="">
+            {% endif %}
+            <div class="absolute -bottom-2 -right-2 w-10 h-10 bg-green-500 border-4 border-white rounded-full"></div>
+        </div>
+        <div class="space-y-2">
+            <h1 class="text-4xl font-extrabold text-slate-900">{{ user.username }}</h1>
+            <div class="flex items-center space-x-3">
+                <span class="px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-xs font-bold uppercase tracking-wider">{{ user.role }}</span>
+                <span class="text-slate-400 font-medium">{{ user.email }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats/Menu -->
+    <div class="grid md:grid-cols-3 gap-8">
+        <div class="col-span-2 space-y-8">
+            <section class="space-y-6">
+                <h2 class="text-2xl font-bold text-slate-900">Tibbiy ko'riklar</h2>
+                <div class="space-y-4">
+                    {% set appointments = user.appointments_as_patient.all() if user.role == 'patient' else user.doctor_profile.appointments.all() %}
+                    {% for appt in appointments %}
+                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between group hover:shadow-md transition-all">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900">
+                                    {% if user.role == 'patient' %}
+                                    Dr. {{ appt.doctor.user.username }}
+                                    {% else %}
+                                    Bemor: {{ appt.patient.username }}
+                                    {% endif %}
+                                </h4>
+                                <p class="text-sm text-slate-500 font-medium italic">{{ appt.datetime.strftime('%Y-%m-%d %H:%M') }}</p>
+                                <p class="text-xs text-slate-400 mt-1">Sabab: {{ appt.reason }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest 
+                                {% if appt.status == 'pending' %}bg-yellow-50 text-yellow-600
+                                {% elif appt.status == 'confirmed' %}bg-green-50 text-green-600
+                                {% else %}bg-red-50 text-red-600{% endif %}">
+                                {{ 'Kutilmoqda' if appt.status == 'pending' else ('Tasdiqlangan' if appt.status == 'confirmed' else 'Bekor qilingan') }}
+                            </span>
+                            
+                            {% if user.role == 'doctor' and appt.status == 'pending' %}
+                            <div class="flex space-x-2">
+                                <a href="{{ url_for('doctor.manage_appointment', id=appt.id, action='confirm') }}" class="w-10 h-10 bg-green-500 text-white rounded-xl flex items-center justify-center hover:bg-green-600 transition-all shadow-lg shadow-green-100" title="Tasdiqlash">
+                                    <i class="fas fa-check"></i>
+                                </a>
+                                <a href="{{ url_for('doctor.manage_appointment', id=appt.id, action='cancel') }}" class="w-10 h-10 bg-red-500 text-white rounded-xl flex items-center justify-center hover:bg-red-600 transition-all shadow-lg shadow-red-100" title="Bekor qilish">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="p-10 text-center bg-slate-50 rounded-3xl border-2 border-dashed border-slate-100">
+                        <p class="text-slate-400 font-bold">Hozircha uchrashuvlar belgilanmagan.</p>
+                        <a href="{{ url_for('doctor.list_doctors') }}" class="mt-4 inline-block text-blue-600 font-bold hover:underline">Shifokor qidirish</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+
+        <div class="space-y-8">
+            <section class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-6">
+                <h3 class="text-xl font-bold text-slate-900">Hisob sozlamalari</h3>
+                <div class="space-y-3">
+                    <a href="#" class="flex items-center space-x-3 p-4 bg-slate-50 rounded-2xl text-slate-700 font-bold hover:bg-slate-100 transition-all">
+                        <i class="fas fa-user-edit text-blue-500"></i>
+                        <span>Ma'lumotlarni tahrirlash</span>
+                    </a>
+                    <a href="{{ url_for('chat.index') }}" class="flex items-center space-x-3 p-4 bg-slate-50 rounded-2xl text-slate-700 font-bold hover:bg-slate-100 transition-all">
+                        <i class="fas fa-envelope text-indigo-500"></i>
+                        <span>Mening xabarlarim</span>
+                    </a>
+                    <a href="{{ url_for('auth.logout') }}" class="flex items-center space-x-3 p-4 bg-red-50 rounded-2xl text-red-600 font-bold hover:bg-red-100 transition-all">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Chiqish</span>
+                    </a>
+                </div>
+            </section>
+
+            {% if user.role == 'doctor' and form %}
+            <section class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-6">
+                <h3 class="text-xl font-bold text-slate-900">Shifokor sozlamalari</h3>
+                <form action="" method="post" class="space-y-4">
+                    {{ form.hidden_tag() }}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Mutaxassislik</label>
+                        {{ form.specialty(class="w-full bg-slate-50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none") }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Tajriba (Yillarda)</label>
+                        {{ form.experience(class="w-full bg-slate-50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none") }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Ko'rik narxi ($)</label>
+                        {{ form.consultation_fee(class="w-full bg-slate-50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none") }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Men haqimda</label>
+                        {{ form.bio(class="w-full bg-slate-50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none h-24", placeholder="O'zingiz haqingizda...") }}
+                    </div>
+                    <div class="pt-2">
+                        {{ form.submit(class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all") }}
+                    </div>
+                </form>
+            </section>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

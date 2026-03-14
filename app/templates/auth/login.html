@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedHub Clinic - Tizimga kirish</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#0b1120] text-slate-300 min-h-screen relative overflow-y-auto overflow-x-hidden flex flex-col">
+    <!-- Background gradients -->
+    <div class="absolute top-0 left-0 w-2/3 h-full bg-gradient-to-br from-[#1a202c]/50 to-transparent pointer-events-none"></div>
+    <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-bl from-[#134e4a]/40 to-transparent pointer-events-none"></div>
+
+    <!-- Custom Auth Navbar -->
+    <nav class="relative z-10 border-b border-white/5 bg-[#0b1120]/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="{{ url_for('main.index') }}" class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-orange-300 to-amber-600 rounded-xl flex items-center justify-center shadow-lg text-white font-bold text-lg">M</div>
+                <div>
+                    <span class="text-xl font-bold text-white tracking-tight block leading-tight">MedHub Clinic</span>
+                    <span class="text-[10px] text-slate-400 font-semibold tracking-widest uppercase block">Smart Hospital Platform</span>
+                </div>
+            </a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="{{ url_for('main.index') }}" class="text-slate-300 hover:text-white font-medium transition-colors">Bosh sahifa</a>
+                <a href="{{ url_for('doctor.list_doctors') }}" class="text-slate-300 hover:text-white font-medium transition-colors">Shifokorlar</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="{{ url_for('auth.login') }}" class="px-5 py-2 rounded-full border border-white/10 text-white font-medium bg-white/5 transition-all text-sm shadow-inner">Kirish</a>
+                <a href="{{ url_for('auth.register') }}" class="px-5 py-2 bg-[#22c55e] text-white rounded-full font-semibold hover:bg-green-600 shadow-lg shadow-green-500/20 transition-all text-sm cursor-pointer">Bemor registratsiyasi</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="relative z-10 flex-1 flex items-center justify-center p-6">
+        <div class="max-w-5xl w-full grid md:grid-cols-2 gap-8">
+            
+            <!-- Left Info Panel -->
+            <div class="bg-[#121827] border border-white/5 rounded-3xl p-10 flex flex-col justify-center space-y-8 shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-green-500/5 blur-3xl rounded-full pointer-events-none"></div>
+                <div class="relative z-10">
+                    <p class="text-[#34d399] text-xs font-bold uppercase tracking-widest mb-3">Secure Access</p>
+                    <h1 class="text-4xl font-bold text-white mb-4">Tizimga kirish</h1>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Admin, doktor va bemorlar bitta login markazi orqali tizimga kiradi. Doktorlar faqat admin yaratgan username va parol bilan kirishi mumkin.
+                    </p>
+                </div>
+                
+                <div class="space-y-4 relative z-10 mt-6">
+                    <div class="bg-[#0b1120] border border-white/5 rounded-2xl p-5 shadow-inner">
+                        <p class="text-sm font-medium text-slate-300">Login maydoniga username yoki email yozish mumkin.</p>
+                    </div>
+                    <div class="bg-[#0b1120] border border-white/5 rounded-2xl p-5 shadow-inner">
+                        <p class="text-sm font-medium text-slate-300">Bemor registratsiyasi asosiy sahifada, xodimlar registratsiyasi alohida havolada.</p>
+                    </div>
+                    <div class="bg-[#0b1120] border border-white/5 rounded-2xl p-5 shadow-inner">
+                        <p class="text-sm font-medium text-slate-300">Credential ma'lumotlari faqat admin panelida boshqariladi.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Login Form -->
+            <div class="bg-[#0b1120] border border-white/5 rounded-3xl p-10 shadow-2xl flex flex-col justify-center relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-48 h-48 bg-blue-500/5 blur-3xl rounded-full pointer-events-none"></div>
+                
+                <div class="relative z-10">
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                        <div class="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center space-x-3">
+                            <span class="font-medium">{{ message }}</span>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+
+                    <h2 class="text-3xl font-bold text-white mb-2 tracking-tight">Credential bilan kirish</h2>
+                    <p class="text-slate-400 text-sm mb-8">Username yoki email va parolingizni kiriting.</p>
+
+                    <form action="" method="post" class="space-y-6">
+                        {{ form.hidden_tag() }}
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-slate-300">Username yoki email</label>
+                            {{ form.login_id(class="w-full bg-[#121827] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] outline-none transition-all text-sm") }}
+                            {% for error in form.login_id.errors %}
+                            <span class="text-red-400 text-xs mt-1 block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-slate-300">Parol</label>
+                            {{ form.password(class="w-full bg-[#121827] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] outline-none transition-all text-sm") }}
+                            {% for error in form.password.errors %}
+                            <span class="text-red-400 text-xs mt-1 block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+
+                        <div class="pt-4">
+                            {{ form.submit(class="w-full py-3.5 bg-[#22c55e] text-white rounded-xl font-bold text-sm hover:bg-green-600 transition-all cursor-pointer shadow-lg shadow-green-500/20 border-none") }}
+                        </div>
+                        
+                        <p class="text-center text-slate-400 text-sm mt-8">
+                            Bemor akkauntingiz yo'qmi? <a href="{{ url_for('auth.register') }}" class="text-[#34d399] font-bold hover:underline">Registratsiya</a> <br>
+                            Xodim yoki shifokormisiz? <a href="{{ url_for('auth.register_staff') }}" class="text-[#34d399] font-bold hover:underline">Maxsus registratsiya</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

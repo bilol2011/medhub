@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="space-y-12">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="space-y-4">
+            <h1 class="text-4xl font-bold text-slate-900">
+                {% if category %} {{ category }} Mutaxassislari {% else %} Barcha Mutaxassislar {% endif %}
+            </h1>
+            <p class="text-slate-500 text-lg">Bizning professional shifokorlar katalogimiz bilan tanishing.</p>
+        </div>
+        
+        <form action="{{ url_for('doctor.list_doctors') }}" method="get" class="relative group max-w-md w-full">
+            <input type="text" name="q" value="{{ query or '' }}" placeholder="Ism yoki mutaxassislik bo'yicha qidiruv..." class="w-full bg-white border border-slate-200 rounded-2xl px-6 py-4 pl-14 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all font-medium">
+            <div class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors">
+                <i class="fas fa-search text-lg"></i>
+            </div>
+            {% if category %}
+            <input type="hidden" name="category" value="{{ category }}">
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="flex flex-wrap gap-4 overflow-x-auto pb-4">
+        <a href="{{ url_for('doctor.list_doctors') }}" class="px-6 py-2.5 rounded-full font-semibold transition-all {% if not category %}bg-blue-600 text-white shadow-lg shadow-blue-200{% else %}bg-white border border-slate-200 text-slate-600 hover:border-blue-600{% endif %}">
+            Barchasi
+        </a>
+        {% for cat_uz in ['Kardiologiya', 'Stomatologiya', 'Dermatologiya', 'Nevrologiya', 'Pediatriya', 'Ortopediya'] %}
+        <a href="{{ url_for('doctor.list_doctors', category=cat_uz) }}" class="px-6 py-2.5 rounded-full font-semibold transition-all {% if category == cat_uz %}bg-blue-600 text-white shadow-lg shadow-blue-200{% else %}bg-white border border-slate-200 text-slate-600 hover:border-blue-600{% endif %}">
+            {{ cat_uz }}
+        </a>
+        {% endfor %}
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for doctor in doctors %}
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden group hover:shadow-xl transition-all">
+            <div class="p-6 flex items-center space-x-6">
+                {% if doctor.user.profile_pic %}
+                <img src="{{ url_for('static', filename=doctor.user.profile_pic) }}" alt="{{ doctor.user.username }}" class="w-24 h-24 rounded-2xl object-cover">
+                {% else %}
+                <img src="https://i.pravatar.cc/150?u={{ doctor.id }}" alt="{{ doctor.user.username }}" class="w-24 h-24 rounded-2xl object-cover">
+                {% endif %}
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-xl font-bold text-slate-900 truncate">Dr. {{ doctor.user.username }}</h3>
+                    <p class="text-blue-600 font-semibold mb-2">{{ doctor.specialty }}</p>
+                    <div class="flex items-center space-x-1 text-yellow-400 text-sm">
+                        <i class="fas fa-star"></i>
+                        <span class="text-slate-700 font-bold ml-1">{{ doctor.rating }}</span>
+                        <span class="text-slate-400 font-medium">(24 ta sharh)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 pb-6 pt-2 border-t border-slate-50 mt-2">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Tajriba</div>
+                    <div class="text-sm font-bold text-slate-700">{{ doctor.experience }} yillik</div>
+                </div>
+                <div class="flex items-center justify-between mb-6">
+                    <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Mutaxassis ko'rigi</div>
+                    <div class="text-sm font-bold text-slate-900">${{ doctor.consultation_fee }}</div>
+                </div>
+                <div class="flex gap-3">
+                    <a href="{{ url_for('doctor.profile', id=doctor.id) }}" class="flex-1 py-3 text-center border border-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-all">
+                        Tafsilotlar
+                    </a>
+                    <a href="{{ url_for('doctor.book_appointment', id=doctor.id) }}" class="flex-1 py-3 text-center bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all">
+                        Band qilish
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-span-full py-20 text-center space-y-4">
+            <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-400 text-4xl">
+                <i class="fas fa-user-md"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-900">Shifokorlar topilmadi</h3>
+            <p class="text-slate-500">Afsuski, ushbu ruknda hozircha shifokorlar yo'q.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

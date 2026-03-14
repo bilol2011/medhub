@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto py-10">
+    <div class="bg-white p-10 rounded-[2.5rem] border border-slate-100 shadow-xl space-y-8">
+        <div class="flex items-center space-x-6 pb-8 border-b border-slate-50">
+            {% if doctor.user.profile_pic %}
+            <img src="{{ url_for('static', filename=doctor.user.profile_pic) }}" class="w-20 h-20 rounded-2xl object-cover" alt="">
+            {% else %}
+            <img src="https://i.pravatar.cc/100?u={{ doctor.id }}" class="w-20 h-20 rounded-2xl object-cover" alt="">
+            {% endif %}
+            <div>
+                <h2 class="text-3xl font-bold text-slate-900">Uchrashuvni band qilish</h2>
+                <p class="text-blue-600 font-bold">Dr. {{ doctor.user.username }} bilan ko'rik</p>
+            </div>
+        </div>
+
+        <form action="" method="post" class="space-y-6">
+            {{ form.hidden_tag() }}
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">Vaqt va Sana</label>
+                    {{ form.datetime(class="w-full bg-slate-50 border-0 rounded-2xl px-6 py-4 focus:ring-4 focus:ring-blue-100 outline-none transition-all font-medium", placeholder="YYYY-MM-DD HH:MM") }}
+                    {% for error in form.datetime.errors %}
+                    <span class="text-red-500 text-xs">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">Ko'rik narxi</label>
+                    <div class="w-full bg-slate-50 border-0 rounded-2xl px-6 py-4 font-bold text-slate-900 border border-transparent">
+                        ${{ doctor.consultation_fee }}
+                    </div>
+                </div>
+            </div>
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">Murojaat sababi</label>
+                {{ form.reason(class="w-full bg-slate-50 border-0 rounded-2xl px-6 py-4 focus:ring-4 focus:ring-blue-100 outline-none transition-all font-medium h-32", placeholder="Sizni nima bezovta qilyapti?") }}
+                {% for error in form.reason.errors %}
+                <span class="text-red-500 text-xs">{{ error }}</span>
+                {% endfor %}
+            </div>
+            <div class="pt-4">
+                {{ form.submit(class="w-full py-5 bg-blue-600 text-white rounded-2xl font-bold text-xl hover:bg-blue-700 shadow-xl shadow-blue-200 transition-all cursor-pointer") }}
+            </div>
+        </form>
+        <div class="pt-6 border-t border-slate-50 text-center">
+            <p class="text-sm text-slate-500">Band qilish orqali siz bizning <a href="#" class="text-blue-600 font-bold hover:underline">Xizmat ko'rsatish shartlarimizga</a> rozilik bildirasiz.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

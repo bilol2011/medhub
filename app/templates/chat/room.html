@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto h-[calc(100vh-12rem)] flex flex-col bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl overflow-hidden">
+    <!-- Chat Header -->
+    <div class="p-6 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
+        <div class="flex items-center space-x-4">
+            <a href="{{ url_for('chat.index') }}" class="text-slate-400 hover:text-slate-900 transition-colors mr-2">
+                <i class="fas fa-arrow-left text-xl"></i>
+            </a>
+            {% if recipient.profile_pic %}
+            <img src="{{ url_for('static', filename=recipient.profile_pic) }}" class="w-12 h-12 rounded-xl object-cover" alt="">
+            {% else %}
+            <img src="https://i.pravatar.cc/100?u={{ recipient.id }}" class="w-12 h-12 rounded-xl object-cover" alt="">
+            {% endif %}
+            <div>
+                <h2 class="font-extrabold text-slate-900 leading-tight">{{ recipient.username }}</h2>
+                <p class="text-xs text-green-500 font-bold uppercase tracking-widest flex items-center">
+                    <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span> Onlayn
+                </p>
+            </div>
+        </div>
+        <div class="flex space-x-3">
+            <button class="w-10 h-10 bg-white rounded-xl border border-slate-100 text-slate-400 flex items-center justify-center hover:text-blue-600 transition-all">
+                <i class="fas fa-phone"></i>
+            </button>
+            <button class="w-10 h-10 bg-white rounded-xl border border-slate-100 text-slate-400 flex items-center justify-center hover:text-blue-600 transition-all">
+                <i class="fas fa-video"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Messages Container -->
+    <div id="messages" class="flex-1 overflow-y-auto p-8 space-y-6 bg-slate-50/30">
+        {% for msg in messages %}
+        <div class="flex {% if msg.sender_id == current_user.id %}justify-end{% endif %}">
+            <div class="max-w-[70%] space-y-1">
+                <div class="p-4 rounded-2xl text-sm font-medium {% if msg.sender_id == current_user.id %}bg-blue-600 text-white rounded-tr-none shadow-lg shadow-blue-100{% else %}bg-white text-slate-700 border border-slate-100 rounded-tl-none shadow-sm{% endif %}">
+                    {{ msg.content }}
+                </div>
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest {% if msg.sender_id == current_user.id %}text-right{% endif %}">
+                    {{ msg.timestamp.strftime('%H:%M') }}
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Input Area -->
+    <div class="p-6 bg-white border-t border-slate-50">
+        <div class="flex items-center space-x-4 bg-slate-50 p-2 rounded-2xl border border-slate-100">
+            <button class="w-10 h-10 text-slate-400 hover:text-blue-600 transition-colors">
+                <i class="fas fa-paperclip"></i>
+            </button>
+            <input type="text" id="message-input" placeholder="Xabarni shu yerga yozing..." class="flex-1 bg-transparent border-0 focus:ring-0 text-slate-700 font-medium placeholder-slate-400 outline-none">
+            <button id="send-button" class="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const socket = io();
+    const recipientId = {{ recipient.id }};
+    const currentUserId = {{ current_user.id }};
+    const messagesContainer = document.getElementById('messages');
+    const messageInput = document.getElementById('message-input');
+    const sendButton = document.getElementById('send-button');
+
+    // Scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+    socket.on('connect', () => {
+        socket.emit('join', { user_id: currentUserId });
+    });
+
+    socket.on('new_message', (data) => {
+        const isMe = data.sender_id === currentUserId;
+        const msgHtml = `
+            <div class="flex ${isMe ? 'justify-end' : ''}">
+                <div class="max-w-[70%] space-y-1">
+                    <div class="p-4 rounded-2xl text-sm font-medium ${isMe ? 'bg-blue-600 text-white rounded-tr-none shadow-lg shadow-blue-100' : 'bg-white text-slate-700 border border-slate-100 rounded-tl-none shadow-sm'}">
+                        ${data.message}
+                    </div>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest ${isMe ? 'text-right' : ''}">
+                        ${data.timestamp}
+                    </p>
+                </div>
+            </div>
+        `;
+        messagesContainer.insertAdjacentHTML('beforeend', msgHtml);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    });
+
+    const sendMessage = () => {
+        const message = messageInput.value.trim();
+        if (message) {
+            socket.emit('message', {
+                recipient_id: recipientId,
+                message: message
+            });
+            messageInput.value = '';
+        }
+    };
+
+    sendButton.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+</script>
+{% endblock %}

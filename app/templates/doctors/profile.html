@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-12">
+    <!-- Header Card -->
+    <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl overflow-hidden">
+        <div class="h-48 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
+        <div class="px-10 pb-10 -mt-20">
+            <div class="flex flex-col md:flex-row items-end md:items-center justify-between gap-8">
+                <div class="flex flex-col md:flex-row items-end md:items-center gap-8">
+                    {% if doctor.user.profile_pic %}
+                    <img src="{{ url_for('static', filename=doctor.user.profile_pic) }}" alt="{{ doctor.user.username }}" class="w-40 h-40 rounded-[2rem] border-8 border-white shadow-xl object-cover bg-white">
+                    {% else %}
+                    <img src="https://i.pravatar.cc/300?u={{ doctor.id }}" alt="{{ doctor.user.username }}" class="w-40 h-40 rounded-[2rem] border-8 border-white shadow-xl object-cover bg-white">
+                    {% endif %}
+                    <div class="pb-2">
+                        <h1 class="text-4xl font-extrabold text-slate-900">Dr. {{ doctor.user.username }}</h1>
+                        <p class="text-xl text-blue-600 font-bold mb-2">{{ doctor.specialty }}</p>
+                        <div class="flex items-center space-x-4">
+                            <span class="px-3 py-1 bg-green-50 text-green-700 rounded-full text-xs font-bold uppercase tracking-wider">Bugun qabul bor</span>
+                            <div class="flex items-center text-yellow-500 font-bold">
+                                <i class="fas fa-star mr-1"></i> {{ doctor.rating }} <span class="text-slate-400 font-normal ml-1">(120 ta sharh)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap-4 w-full md:w-auto">
+                    <a href="{{ url_for('chat.room', recipient_id=doctor.user.id) }}" class="flex-1 md:flex-none px-8 py-4 bg-white text-slate-700 border-2 border-slate-100 rounded-2xl font-bold hover:bg-slate-50 transition-all flex items-center justify-center space-x-2">
+                        <i class="fas fa-comment-dots"></i>
+                        <span>Xabar yozish</span>
+                    </a>
+                    <a href="{{ url_for('doctor.book_appointment', id=doctor.id) }}" class="flex-1 md:flex-none px-8 py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 shadow-xl shadow-blue-200 transition-all flex items-center justify-center space-x-2">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Band qilish</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-10">
+        <!-- Main Info -->
+        <div class="lg:col-span-2 space-y-10">
+            <section class="bg-white p-10 rounded-3xl border border-slate-100 shadow-sm space-y-6">
+                <h2 class="text-2xl font-bold text-slate-900">Shifokor haqida</h2>
+                <p class="text-slate-600 leading-relaxed text-lg italic">
+                    {{ doctor.user.bio or "Ushbu shifokor haqida hozircha ma'lumot yo'q. O'z sohasining mutaxassisi." }}
+                </p>
+                <div class="grid grid-cols-2 gap-8 pt-6">
+                    <div class="p-6 bg-slate-50 rounded-2xl">
+                        <p class="text-slate-400 text-sm font-bold uppercase mb-1">Ma'lumoti</p>
+                        <p class="text-slate-900 font-bold">MD - Tibbiyot Akademiyasi</p>
+                    </div>
+                    <div class="p-6 bg-slate-50 rounded-2xl">
+                        <p class="text-slate-400 text-sm font-bold uppercase mb-1">Tajriba</p>
+                        <p class="text-slate-900 font-bold">{{ doctor.experience }} yillik professional tajriba</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-white p-10 rounded-3xl border border-slate-100 shadow-sm space-y-6">
+                <h2 class="text-2xl font-bold text-slate-900">Fikr va Mulohazalar</h2>
+                <div class="space-y-8">
+                    {% for i in range(2) %}
+                    <div class="flex space-x-4 border-b border-slate-50 pb-8 last:border-0 last:pb-0">
+                        <img src="https://i.pravatar.cc/100?u={{ i+10 }}" class="w-12 h-12 rounded-full ring-2 ring-slate-100 p-1" alt="">
+                        <div class="flex-1 space-y-2">
+                            <div class="flex justify-between items-center">
+                                <h4 class="font-bold text-slate-900">Bemor {{ i+1 }}</h4>
+                                <span class="text-slate-400 text-sm">2 kun avval</span>
+                            </div>
+                            <div class="flex text-yellow-400 text-xs">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <p class="text-slate-600 italic">"Juda tajribali va e'tiborli shifokor. Ko'rik juda foydali bo'ldi, barchaga tavsiya qilaman."</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+
+        <!-- Sidebar Info -->
+        <div class="space-y-10">
+            <section class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-6">
+                <h3 class="text-xl font-bold text-slate-900">Ish vaqti</h3>
+                <div class="space-y-4">
+                    {% for day, day_uz in [('Monday', 'Dushanba'), ('Tuesday', 'Seshanba'), ('Wednesday', 'Chorshanba'), ('Thursday', 'Payshanba'), ('Friday', 'Juma')] %}
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500 font-medium">{{ day_uz }}</span>
+                        <span class="text-slate-900 font-bold">09:00 - 17:00</span>
+                    </div>
+                    {% endfor %}
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500 font-medium">Shanba</span>
+                        <span class="text-slate-900 font-bold">10:00 - 14:00</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500 font-medium text-red-400">Yakshanba</span>
+                        <span class="text-red-400 font-bold">Dam olish kuni</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-blue-600 p-8 rounded-3xl shadow-xl shadow-blue-200 text-white space-y-6">
+                <h3 class="text-xl font-bold">Ko'rik narxi</h3>
+                <div class="flex items-baseline justify-between">
+                    <span class="text-4xl font-extrabold">${{ doctor.consultation_fee }}</span>
+                    <span class="text-blue-200 font-medium">har bir seans uchun</span>
+                </div>
+                <p class="text-blue-100 text-sm leading-relaxed">Professional konsultatsiya, ko'rik va zarur bo'lsa raqamli retseptni o'z ichiga oladi.</p>
+                <a href="{{ url_for('doctor.book_appointment', id=doctor.id) }}" class="block w-full py-4 bg-white text-blue-600 rounded-2xl font-bold text-center hover:bg-blue-50 transition-all">
+                    Band qilish
+                </a>
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock %}
