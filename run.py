@@ -13,6 +13,6 @@ if __name__ == '__main__':
 
 from flask import send_from_directory
 
-@app.route('/googlec158ac2d82043b05.html')
+@app.route('googlec158ac2d82043b05.html')
 def google_verify():
     return send_from_directory('.', 'googlec158ac2d82043b05.html')
