@@ -35,3 +35,19 @@ def create_app(config_class=Config):
     return app
 
 from app import models
+
+
+from flask import Flask
+
+def create_app():
+    app = Flask(__name__)
+
+    @app.route('/')
+    def home():
+        return "Sayt ishlayapti ✅"
+
+    @app.route('/googlec158ac2d82043b05.html')
+    def google_verify():
+        return "google-site-verification: googlec158ac2d82043b05.html"
+
+    return app
