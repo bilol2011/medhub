@@ -1,34 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="MedHub - Zamonaviy va qulay tibbiy platforma. Maxamadjonov Bilol tomonidan yaratilgan. Shifokorlar bilan onlayn bog'lanish, tibbiy maslahatlar va ko'riklar uchun eng yaxshi yechim.">
-    <meta name="keywords" content="MedHub, tibbiyot, shifokorlar, qabulga yozilish, onlayn klinika, tibbiy platforma, sog'liqni saqlash, Maxamadjonov Bilol, Mahamadjonov Bilol, dasturlash, web dasturlash, tibbiyot portali, O'zbekiston">
-    <meta name="author" content="Maxamadjonov Bilol">
-    <meta name="robots" content="index, follow">
     
-    <!-- Google Search Console Verification -->
+    <!-- SEO Tags -->
+    <meta name="description" content="{% block meta_description %}MedHub - Zamonaviy tibbiy platform. Shifokorlar bilan onlayn bog'lanish, telemedicine xizmatlar, professional tibbiy maslahatlar. Flask chat platforma.{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}medhub, tibbiy chat, onlayn shifokor, telemedicine, tibbiy platforma, flutter chat, sog'liqni saqlash, O'zbekiston{% endblock %}">
+    <meta name="author" content="MedHub Team">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="language" content="Uzbek">
+    <meta name="revisit-after" content="7 days">
+    
+    <!-- Google Search Console -->
     <meta name="google-site-verification" content="googlec158ac2d82043b05" />
-
-    <!-- Open Graph (Facebook, LinkedIn) -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="MedHub - Zamonaviy Tibbiy Platforma | Maxamadjonov Bilol">
-    <meta property="og:description" content="Onlayn tibbiy xizmatlar, shifokorlar qabuli va professional tibbiy maslahatlar. Maxamadjonov Bilol loyihasi.">
     
-    <!-- Twitter -->
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}MedHub - Zamonaviy Tibbiy Platform{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Professional tibbiy xizmatlar va onlayn shifokor qabuli. Maxamadjonov Bilol tomonidan yaratilgan.{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ url_for('static', filename='img/preview.jpg', _external=True) }}{% endblock %}">
+    <meta property="og:url" content="{% block og_url %}{{ request.url }}{% endblock %}">
+    <meta property="og:site_name" content="MedHub">
+    
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="MedHub - Zamonaviy Tibbiy Platforma">
-    <meta name="twitter:description" content="Onlayn tibbiy xizmatlar va shifokorlar qabuli. Maxamadjonov Bilol loyihasi.">
-
-    <title>MedHub - {% if title %}{{ title }}{% else %}Modern Medical Platform{% endif %}</title>
+    <meta name="twitter:title" content="{% block twitter_title %}MedHub - Zamonaviy Tibbiy Platform{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}Professional tibbiy xizmatlar, onlayn shifokorlar qabuli va telemedicine{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}{{ url_for('static', filename='img/preview.jpg', _external=True) }}{% endblock %}">
+    <meta name="twitter:creator" content="@medhub_uz">
+    
+    <!-- Canonical -->
+    <link rel="canonical" href="{% block canonical %}{{ request.url_root.rstrip('/') + request.path }}{% endblock %}">
+    
+    <!-- Stylesheets -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    
+    <!-- Title -->
+    <title>{% block title %}MedHub - Tibbiy Platform{% endblock %}</title>
+    
+    <!-- Inline Styles -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; }
+        
+        .gradient-text { background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .gradient-btn { background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); transition: all 0.3s ease; }
+        .gradient-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3); }
+        
+        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        
+        .navbar { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(229, 231, 235, 0.5); box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05); }
+        .navbar.sticky { position: sticky !important; top: 0; z-index: 40; }
+        
+        .card { background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; }
+        .card:hover { box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); transform: translateY(-2px); }
+        
+        .btn-primary { background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); color: white; padding: 10px 24px; border-radius: 8px; font-weight: 600; transition: all 0.3s; border: none; cursor: pointer; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3); }
+        
+        .btn-secondary { background: white; color: #2563eb; border: 2px solid #2563eb; padding: 10px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .btn-secondary:hover { background: #2563eb; color: white; }
+        
+        .input-field { width: 100%; padding: 12px 16px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; transition: all 0.3s; font-family: 'Inter', sans-serif; }
+        .input-field:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        
+        .footer { background: linear-gradient(135deg, #1f2937 0%, #111827 100%); color: white; padding: 40px 20px 20px; }
+        .footer a { color: #93c5fd; text-decoration: none; transition: color 0.3s; }
+        .footer a:hover { color: #60a5fa; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: fadeIn 0.6s ease-out; }
+        
+        .feature-icon { width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+        
+        @media (max-width: 768px) { 
+            body { font-size: 14px; }
+            .text-4xl { font-size: 28px; }
+            .text-3xl { font-size: 24px; }
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen">

@@ -1,0 +1,39 @@
+# MedHub Robots.txt - Search Engine Crawling Rules
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/v1/private/
+Disallow: /user/settings/
+Disallow: /chat/
+Disallow: /*.json$
+Disallow: /search?
+Disallow: /*?sort=
+Disallow: /uploads/
+Allow: /uploads/img/
+
+# Specific rules for Googlebot
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+Request-rate: 100/1h
+
+# Specific rules for Bingbot
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+Request-rate: 30/1h
+
+# Yandex Bot
+User-agent: YandexBot
+Allow: /
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://nogiron.pythonanywhere.com/sitemap.xml
+
+# Comments
+# This file tells search engines which pages they can and cannot crawl
+# Blocking certain paths protects sensitive information and reduces server load
+
+# To view how Google crawls your site: https://search.google.com/search-console
